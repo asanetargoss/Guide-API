@@ -38,22 +38,26 @@ public class CommonProxy implements IGuiHandler {
                     if (tagCompound.hasKey(NBTBookTags.ENTRY_TAG) && tagCompound.hasKey(NBTBookTags.CATEGORY_TAG)) {
                         CategoryAbstract category = book.getCategoryList().get(tagCompound.getInteger(NBTBookTags.CATEGORY_TAG));
                         EntryAbstract entry = category.entries.get(new ResourceLocation(tagCompound.getString(NBTBookTags.ENTRY_TAG)));
-                        int pageNumber = tagCompound.getInteger(NBTBookTags.PAGE_TAG);
-                        GuiEntry guiEntry = new GuiEntry(book, category, entry, player, stack);
-                        guiEntry.pageNumber = pageNumber;
-                        return guiEntry;
-                    } else if (tagCompound.hasKey(NBTBookTags.CATEGORY_TAG)) {
-                        CategoryAbstract category = book.getCategoryList().get(tagCompound.getInteger(NBTBookTags.CATEGORY_TAG));
-                        int entryPage = tagCompound.getInteger(NBTBookTags.ENTRY_PAGE_TAG);
-                        GuiCategory guiCategory = new GuiCategory(book, category, player, stack);
-                        guiCategory.entryPage = entryPage;
-                        return guiCategory;
-                    } else {
-                        int categoryNumber = tagCompound.getInteger(NBTBookTags.CATEGORY_PAGE_TAG);
-                        GuiHome guiHome = new GuiHome(book, player, stack);
-                        guiHome.categoryPage = categoryNumber;
-                        return guiHome;
+                        if (entry != null) {
+                            int pageNumber = tagCompound.getInteger(NBTBookTags.PAGE_TAG);
+                            GuiEntry guiEntry = new GuiEntry(book, category, entry, player, stack);
+                            guiEntry.pageNumber = pageNumber;
+                            return guiEntry;
+                        }
                     }
+                    if (tagCompound.hasKey(NBTBookTags.CATEGORY_TAG)) {
+                        CategoryAbstract category = book.getCategoryList().get(tagCompound.getInteger(NBTBookTags.CATEGORY_TAG));
+                        if (category != null) {
+                            int entryPage = tagCompound.getInteger(NBTBookTags.ENTRY_PAGE_TAG);
+                            GuiCategory guiCategory = new GuiCategory(book, category, player, stack);
+                            guiCategory.entryPage = entryPage;
+                            return guiCategory;
+                        }
+                    }
+                    int categoryNumber = tagCompound.getInteger(NBTBookTags.CATEGORY_PAGE_TAG);
+                    GuiHome guiHome = new GuiHome(book, player, stack);
+                    guiHome.categoryPage = categoryNumber;
+                    return guiHome;
                 }
             } catch (Exception e) {
                 // No-op: Catching if the saved page/entry/category doesn't exist anymore
